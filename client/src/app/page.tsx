@@ -6,27 +6,39 @@ import AddTaskDialog from '@/components/AddTaskDialog';
 import { TarefaResponse, TarefaRequest } from '@/types/tarefa';
 import { toast } from 'react-toastify';
 
+// Componente principal da página Home
 export default function Home() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [tasks, setTasks] = useState<TarefaResponse[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar a abertura do modal
+  const [tasks, setTasks] = useState<TarefaResponse[]>([]); // Estado para armazenar as tarefas
+  const [loading, setLoading] = useState(true); // Estado para controlar o carregamento
 
+  // useEffect para buscar as tarefas ao carregar a página
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         const res = await fetch('/api/tarefas');
 
+        // Verifica se a API retornou um erro (4xx ou 5xx)
+        // Se sim, exibe uma mensagem de erro
         if (!res.ok) {
           const error = await res.json();
+
           toast.error(error.message);
+
           setLoading(false);
+
           return;
         }
 
         const data = await res.json();
+
+        // Atualiza o estado com as tarefas recebidas
         setTasks(data);
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      } catch (error) { // Captura de erro para caso o fetch falhe (ex.: rede inacessível)
+        const errorMessage = error instanceof Error 
+          ? error.message 
+          : 'Ops! Ocorreu um erro inesperado. Tente novamente mais tarde.';	
+
         toast.error(errorMessage);
       } finally {
         setLoading(false);
@@ -36,6 +48,7 @@ export default function Home() {
     fetchTasks();
   }, []);
 
+  // Função para adicionar uma nova tarefa
   const handleAddTask = async (task: TarefaRequest) => {
     try {
       const res = await fetch('/api/tarefas', {
@@ -46,39 +59,54 @@ export default function Home() {
 
       if (!res.ok) {
         const error = await res.json();
+
         toast.error(error.message);
+
         return;
       }
 
       const newTask: TarefaResponse = await res.json();
+
+      // Atualiza o estado com a nova tarefa recebida
       setTasks([...tasks, newTask]);
+
       toast.success('Tarefa adicionada com sucesso!');
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Ops! Ocorreu um erro inesperado. Tente novamente mais tarde.';
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Ops! Ocorreu um erro inesperado. Tente novamente mais tarde.';
+
       toast.error(errorMessage);
     }
   };
 
+  // Função para deletar uma tarefa existente
   const handleDeleteTask = async (id: number) => {
     try {
       const res = await fetch(`/api/tarefas/${id}`, { method: 'DELETE' });
 
       if (!res.ok) {
         const error = await res.json();
+
         toast.error(error.message);
+
         return;
       }
 
+      // Atualiza o estado removendo a tarefa deletada
       setTasks(tasks.filter((task) => task.id !== id));
-      toast.success('Task deleted successfully');
+
+      toast.success('Tarefa excluída com sucesso!');
     } catch (error) {
       const errorMessage = error instanceof Error 
         ? error.message 
         : 'Ops! Ocorreu um erro inesperado. Tente novamente mais tarde.';
+
       toast.error(errorMessage);
     }
   };
 
+   // Função para atualizar uma tarefa existente
   const handleUpdateTask = async (updatedTask: TarefaResponse) => {
     try {
       const res = await fetch(`/api/tarefas/${updatedTask.id}`, {
@@ -89,16 +117,21 @@ export default function Home() {
 
       if (!res.ok) {
         const error = await res.json();
+
         toast.error(error.message);
+
         return;
       }
 
+      // Atualiza o estado com a tarefa atualizada
       setTasks(tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)));
+
       toast.success('Tarefa atualizada com sucesso!');
     } catch (error) {
       const errorMessage = error instanceof Error 
         ? error.message 
         : 'Ops! Ocorreu um erro inesperado. Tente novamente mais tarde.';
+
       toast.error(errorMessage);
     }
   };

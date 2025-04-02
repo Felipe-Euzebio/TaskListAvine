@@ -3,14 +3,19 @@
 import { useForm } from 'react-hook-form';
 import { TarefaRequest } from '@/types/tarefa';
 
+// Propriedades do componente AddTaskDialog
 interface AddTaskDialogProps {
   onAddTask: (task: TarefaRequest) => void;
   onClose: () => void;
 }
 
+// Componente do modal para adicionar uma nova tarefa
 export default function AddTaskDialog({ onAddTask, onClose }: AddTaskDialogProps) {
   const { register, handleSubmit, reset } = useForm<TarefaRequest>();
 
+  // Função para lidar com o envio do formulário
+  // Adiciona a tarefa e fecha o modal
+  // Reseta o formulário após o envio
   const onSubmit = (data: TarefaRequest) => {
     onAddTask(data);
     reset();

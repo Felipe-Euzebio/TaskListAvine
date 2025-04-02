@@ -5,46 +5,60 @@ import { TarefaResponse } from '@/types/tarefa';
 import { PencilIcon, TrashIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useForm } from 'react-hook-form';
 
+// Propriedades do componente TaskItem
 interface TaskItemProps {
   task: TarefaResponse;
   onDelete: (id: number) => void;
   onUpdate: (task: TarefaResponse) => void;
 }
 
+// Componente para exibir um item de tarefa
 export default function TaskItem({ task, onDelete, onUpdate }: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const { register, handleSubmit, reset, setValue } = useForm<TarefaResponse>({
     defaultValues: task,
   });
 
+  // Função para lidar com o clique no botão de editar
   const handleEditClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault(); // Prevent form submission
+    event.preventDefault();
     setIsEditing(true);
   };
 
+  // Função para lidar com o clique no botão de deletar
+  // Deleta a tarefa com o ID correspondente
   const handleDeleteClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault(); // Prevent form submission
     onDelete(task.id);
   };
 
+  // Função para lidar com o clique no botão de cancelar
+  // Reseta os valores do formulário para os valores originais da tarefa
   const handleCancelClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault(); // Prevent form submission
+    event.preventDefault();
     reset(task);
     setIsEditing(false);
   };
 
+  // Função para lidar com o envio do formulário
+  // Atualiza a tarefa com os novos valores
   const onSubmit = (data: TarefaResponse) => {
     onUpdate(data);
     setIsEditing(false);
   };
 
-  const formatDeadline = (dateString: string) => {
+  // Função para formatar data para o format dd/MM/yyyy
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
+
+    const fmtDate = Intl.DateTimeFormat('pt-BR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(date);
+
+    return fmtDate;
+  }
 
   return (
     <form key={task.id} className="bg-white shadow-md rounded-md p-4 flex flex-col justify-between h-full" onSubmit={handleSubmit(onSubmit)}>
@@ -79,7 +93,7 @@ export default function TaskItem({ task, onDelete, onUpdate }: TaskItemProps) {
                 />
               </div>
             ) : (
-              <p className="text-gray-500 text-sm">{formatDeadline(task.prazoEntrega)}</p>
+              <p className="text-gray-500 text-sm">{formatDate(task.prazoEntrega)}</p>
             )}
           </div>
         </div>
