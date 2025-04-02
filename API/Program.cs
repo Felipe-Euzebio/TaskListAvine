@@ -46,4 +46,11 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Aplica as migrações pendentes.
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await context.Database.MigrateAsync();
+}
+
 await app.RunAsync();
