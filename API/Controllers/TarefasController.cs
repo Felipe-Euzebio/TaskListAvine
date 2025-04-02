@@ -3,6 +3,7 @@ using API.Dtos;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace API.Controllers;
 
@@ -38,7 +39,11 @@ public class TarefasController : ControllerBase
     {
         var tarefa = await _context.Tarefas.FindAsync(id);
 
-        if (tarefa == null) return NotFound("Tarefa não encontrada");
+        if (tarefa == null) return NotFound(new ErrorResponse
+        {
+            StatusCode = HttpStatusCode.NotFound,
+            Message = "Tarefa não encontrada"
+        });
 
         return Ok(new TarefaResponse
         {
@@ -79,7 +84,11 @@ public class TarefasController : ControllerBase
     {
         var tarefa = await _context.Tarefas.FindAsync(id);
 
-        if (tarefa == null) return NotFound("Tarefa não encontrada");
+        if (tarefa == null) return NotFound(new ErrorResponse
+        {
+            StatusCode = HttpStatusCode.NotFound,
+            Message = "Tarefa não encontrada"
+        });
 
         tarefa.Titulo = request.Titulo;
         tarefa.Descricao = request.Descricao;
@@ -103,7 +112,11 @@ public class TarefasController : ControllerBase
     {
         var tarefa = await _context.Tarefas.FindAsync(id);
 
-        if (tarefa == null) return NotFound("Tarefa não encontrada");
+        if (tarefa == null) return NotFound(new ErrorResponse
+        {
+            StatusCode = HttpStatusCode.NotFound,
+            Message = "Tarefa não encontrada"
+        });
 
         _context.Tarefas.Remove(tarefa);
 
