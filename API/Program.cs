@@ -4,8 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Adiciona o serviço de CORS.
 builder.Services.AddCors(o =>
 {
     o.AddDefaultPolicy(p =>
@@ -17,18 +16,21 @@ builder.Services.AddCors(o =>
 });
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Obtém a string de conexão do arquivo de configuração.
 string? mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 
+// Adiciona o serviço de banco de dados.
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection))
 );
 
 var app = builder.Build();
 
+// Adiciona o tratamento global de exceções.
 app.ConfigureExceptionHandler();
 
 // Configure the HTTP request pipeline.

@@ -11,6 +11,7 @@ namespace API.Controllers;
 [ApiController]
 public class TarefasController : ControllerBase
 {
+    // Contexto do banco de dados.
     private readonly AppDbContext _context;
 
     public TarefasController(AppDbContext context)
@@ -18,6 +19,7 @@ public class TarefasController : ControllerBase
         _context = context;
     }
 
+    // Rota para obter todas as tarefas.
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TarefaResponse>>> Get()
     {
@@ -34,11 +36,13 @@ public class TarefasController : ControllerBase
         return Ok(response);
     }
 
+    // Rota para obter uma tarefa por ID.
     [HttpGet("{id}")]
     public async Task<ActionResult<TarefaResponse>> Get(int id)
     {
         var tarefa = await _context.Tarefas.FindAsync(id);
 
+        // Verifica se a tarefa existe. Caso contrário, retorna um erro 404.
         if (tarefa == null) return NotFound(new ErrorResponse
         {
             StatusCode = HttpStatusCode.NotFound,
@@ -54,6 +58,7 @@ public class TarefasController : ControllerBase
         });
     }
 
+    // Rota para criar uma nova tarefa.
     [HttpPost]
     public async Task<ActionResult<TarefaResponse>> Post(TarefaRequest request)
     {
@@ -79,6 +84,7 @@ public class TarefasController : ControllerBase
         return CreatedAtAction(nameof(Get), new { id = tarefa.Id }, response);
     }
 
+    // Rota para atualizar uma tarefa por ID.
     [HttpPut("{id}")]
     public async Task<ActionResult<TarefaResponse>> Put(int id, TarefaRequest request)
     {
@@ -107,6 +113,7 @@ public class TarefasController : ControllerBase
         return Ok(response);
     }
 
+    // Rota para deletar uma tarefa por ID.
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
